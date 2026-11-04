@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import contextlib
+import json
 import threading
 import time
 
@@ -15,7 +16,7 @@ from textual.widgets import Footer, Header, RichLog, Static
 from .comments import CommentScraper
 from .storage import save_json_atomic
 from .streaming import ChatStreamer
-from .utils import PLAIN_TYPES, user_color
+from .utils import PLAIN_TYPES, make_filter, user_color
 from .worker_control import _Stop
 
 
@@ -66,6 +67,9 @@ class ChatcapApp(App):
         video_url: str,
         output_file: str | None = None,
         comment_mode: bool = False,
+        keywords: list[str] | None = None,
+        users: list[str] | None = None,
+        append: bool = False,
     ):
         super().__init__()
         self.video_url = video_url
@@ -80,6 +84,22 @@ class ChatcapApp(App):
         self._ended = False
         self._save_lock = threading.Lock()
         self._last_save = 0.0
+        self._seen_ids: set[str] = set()
+        self._filter = make_filter(keywords, users)
+
+        if append:
+            try:
+                with open(self.output_file, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                if isinstance(data, list):
+                    self.saved = list(data)
+                    for m in self.saved:
+                        mid = m.get("message_id") if isinstance(m, dict) else None
+                        if mid:
+                            self._seen_ids.add(mid)
+            except (OSError, json.JSONDecodeError, TypeError, ValueError):
+                self.saved = []
+                self._seen_ids = set()
 
     def compose(self) -> ComposeResult:
         yield Header(show_clock=True)
@@ -120,7 +140,15 @@ class ChatcapApp(App):
         """Store, persist and display one message (called from the worker thread)."""
         if self._stop.is_set():
             raise _Stop
-        self.saved.append(msg)
+        if not self._filter(msg):
+            return
+        mid = msg.get("message_id")
+        with self._save_lock:
+            if mid and mid in self._seen_ids:
+                return
+            if mid:
+                self._seen_ids.add(mid)
+            self.saved.append(msg)
         try:
             self._save()
         except OSError as e:

@@ -18,5 +18,11 @@ dependencies = [
 [project.scripts]
 chatcap = "chatcap.cli:main"
 
+[project.optional-dependencies]
+test = ["pytest", "pytest-mock"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
 [tool.setuptools]
 packages = ["chatcap"]
