@@ -2,14 +2,25 @@
 
 Run with ``python -m chatcap URL`` or ``python index.py URL``.
 Install dependencies with ``pip install -e .``.
+
+Subcommand:
+    chatcap analyze <saved.json> [--top N] [--bucket 5m]
+                                     [--json out.json] [--markdown report.md]
+        Offline analytics over a saved chat JSON file (no capture).
 """
 
 import argparse
+import sys
 
 from .app import ChatcapApp
 
 
 def main() -> None:
+    # ``chatcap analyze <file>`` — offline analytics, no capture needed.
+    if len(sys.argv) > 1 and sys.argv[1] == "analyze":
+        from .analytics import analyze_main
+        raise SystemExit(analyze_main(sys.argv[2:]))
+
     parser = argparse.ArgumentParser(
         description="Chatcap — capture YouTube live chat and comments."
     )

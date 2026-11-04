@@ -142,11 +142,41 @@ Chatcap writes a JSON array, one object per message. Full samples are available 
 | `membership` | Membership event or milestone |
 | `comment` | Regular video comment (top-level or reply) |
 
+## Chat Analytics & Statistics
+
+Analyze a saved chat file offline — no re-capture needed:
+
+```bash
+chatcap analyze my_live_chat.json
+chatcap analyze my_live_chat.json --top 10 --bucket 5m
+chatcap analyze my_comments.json --json analytics.json --markdown report.md
+```
+
+| Argument | Description | Default |
+|---|---|---|
+| `file` | Saved chat JSON (live chat or comments) | — |
+| `--top` | Top-N for ranked lists | `10` |
+| `--bucket` | Timeline bucket: `60s`, `5m`, `1h`, `1d` | auto (per-minute <2h, 5-min 2–8h, hourly >8h) |
+| `-o`, `--json` | Also write machine-readable JSON | — |
+| `--markdown` | Also write a Markdown report with ASCII charts | — |
+| `--no-tables` | Suppress terminal tables (useful when writing files) | off |
+
+**Metrics** (all implemented in `chatcap/analytics.py`):
+- **Most Active Users** — raw message count per user (share %, handle, type split).
+- **Most Repeated Words** — lowercase + punctuation/URL/mention-stripped tokens, EN stopwords & <3-char words dropped; emojis ranked separately.
+- **Most Liked Comments** — by `like_count` when present; reports "no like data" for live chat (which has no likes) instead of faking it.
+- **Message Frequency Timeline** — bucketed counts by `datetime` (fallback `video_offset_ms`), empty buckets as `0`.
+- **Peak Chat Activity** — busiest bucket + top 3 peaks.
+- **User Participation Ranking** — composite score table (messages + share + likes + avg message length) with all components shown.
+
+Outputs: Rich terminal tables, structured JSON, and a Markdown report with ASCII bar charts. Zero new dependencies — single-pass `Counter`-based aggregation that handles 10k–100k+ messages efficiently.
+
 ## How it works
 
 ```
 chatcap/
 ├── cli.py            # Argument parsing and entry point
+├── analytics.py      # Chat Analytics & Statistics (offline JSON analysis)
 ├── app.py            # Textual TUI: status bar, log, key bindings, worker thread
 ├── streaming.py      # Live chat / replay polling loop (generator-based)
 ├── comments.py       # Comment scraper built on yt-dlp
