@@ -142,6 +142,35 @@ Chatcap writes a JSON array, one object per message. Full samples are available 
 | `membership` | Membership event or milestone |
 | `comment` | Regular video comment (top-level or reply) |
 
+## Browser extension (Chrome / Edge) 🧩
+
+🆕 **Fitur baru dari project ini:** extension sepenuhnya ada di folder
+[`extension/`](extension/) — versi Phase 2 di mana engine scraping, analytics, dan export
+dijalankan **native di browser** (tidak butuh Python).
+
+Chatcap juga tersedia sebagai **side panel extension** di Chrome dan Edge. Sejak
+Phase 2, extension ini **berjalan native di browser tanpa Python**: scraping Innertube,
+analytics, dan export di-port ke JavaScript, dengan poller di *offscreen document*
+agar capture tetap jalan saat panel ditutup.
+
+```text
+YouTube tab → Side Panel → Service Worker → Offscreen poller → youtubei/v1/*
+                   ↑             │                  ↓
+                   └──── relay ──┴──── IndexedDB → export JSON/CSV/MD/HTML
+```
+
+Langkah singkat:
+
+```text
+chrome://extensions → Developer mode → Load unpacked → pilih folder extension/
+→ buka YouTube → klik ikon Chatcap → Start capture → pilih sesi → Export
+```
+
+Skema pesan identik dengan CLI, jadi `chatcap analyze file.json` tetap bisa dipakai
+untuk hasil export. Panduan lengkap, arsitektur, dan troubleshooting ada di
+[`extension/README.md`](extension/README.md). (Backend native messaging Phase 1
+masih disimpan di `extension/native-host/` sebagai fallback opsional.)
+
 ## Chat Analytics & Statistics
 
 Analyze a saved chat file offline — no re-capture needed:
