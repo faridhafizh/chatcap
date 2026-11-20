@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Chatcap options</title>
+  <style>
+    body{margin:0;padding:28px;background:#0e1117;color:#e6edf3;
+         font:14px/1.5 ui-sans-serif,system-ui,"Segoe UI",sans-serif}
+    h1{font-size:20px;margin:0 0 18px}
+    label{display:block;margin-bottom:16px;max-width:620px}
+    span{display:block;color:#8b949e;margin-bottom:5px}
+    input[type=text]{width:100%;padding:8px;background:#0d1117;color:#e6edf3;
+          border:1px solid #30363d;border-radius:6px;font:inherit}
+    input[type=checkbox]{width:auto;margin-right:6px}
+    button{padding:8px 14px;background:#4f46e5;color:#fff;border:0;border-radius:6px;cursor:pointer}
+    small{display:block;color:#8b949e;margin-top:8px;max-width:620px}
+  </style>
+</head>
+<body>
+  <h1>Chatcap options</h1>
+  <label>
+    <span>Default filename prefix</span>
+    <input id="output-prefix" type="text" placeholder="chatcap" spellcheck="false">
+  </label>
+  <label>
+    <input id="auto-name" type="checkbox" checked>
+    <span style="display:inline">Append the video ID to the filename when filling from a YouTube tab</span>
+  </label>
+  <button id="save">Save</button>
+  <small id="saved"></small>
+  <small>Captured messages stay in this browser until you export them. Exports are
+  downloaded to your browser's Downloads/chatcap folder. Python is not required.</small>
+  <script src="options.js"></script>
+</body>
+</html>

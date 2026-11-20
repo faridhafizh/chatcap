@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Chatcap</title>
+  <link rel="stylesheet" href="panel.css">
+</head>
+<body>
+  <header class="top">
+    <div class="brand"><span class="dot"></span><b>Chatcap</b></div>
+    <span id="status" class="pill idle">Idle</span>
+  </header>
+
+  <section class="setup">
+    <label class="field">
+      <span>Video URL</span>
+      <div class="row">
+        <input id="url" type="url" placeholder="https://www.youtube.com/watch?v=…" spellcheck="false">
+        <button id="refresh-tab" class="icon" title="Use the active YouTube tab">↻</button>
+      </div>
+    </label>
+    <small id="video-title" class="hint">Open a YouTube tab, then click ↻ to fill this in.</small>
+
+    <div class="grid">
+      <label class="field">
+        <span>Mode</span>
+        <select id="mode">
+          <option value="live">Live chat / replay</option>
+          <option value="comment">Comments + replies</option>
+        </select>
+      </label>
+      <label class="field">
+        <span>Output file</span>
+        <input id="output" type="text" placeholder="chatcap.json" spellcheck="false">
+      </label>
+    </div>
+    <div class="grid">
+      <label class="field">
+        <span>Keywords <small>(comma separated)</small></span>
+        <input id="keywords" type="text" placeholder="clutch, gg" spellcheck="false">
+      </label>
+      <label class="field">
+        <span>Users <small>(comma separated)</small></span>
+        <input id="users" type="text" placeholder="@name, UC…" spellcheck="false">
+      </label>
+    </div>
+
+    <div class="buttons">
+      <button id="start" class="primary">▶ Start capture</button>
+      <button id="stop" disabled>■ Stop</button>
+      <button id="clear" title="Clear the view (messages keep saving)">Clear view</button>
+    </div>
+    <small id="path" class="hint">Messages are stored locally in this browser — export to download a file.</small>
+  </section>
+
+  <section class="bar">
+    <span id="count">0 messages</span>
+    <label class="session-pick">Session:
+      <select id="session"><option value="">Current</option></select>
+    </label>
+    <span class="exports">
+      <label>Export:</label>
+      <button data-format="json">JSON</button>
+      <button data-format="csv">CSV</button>
+      <button data-format="md">MD</button>
+      <button data-format="html">HTML</button>
+    </span>
+  </section>
+
+  <main id="log" aria-live="polite"></main>
+  <div id="toast" class="toast" hidden></div>
+
+  <script type="module" src="panel.js"></script>
+</body>
+</html>

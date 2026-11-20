@@ -1,0 +1,10 @@
+{
+  "name": "chatcap-extension",
+  "version": "0.2.3",
+  "private": true,
+  "type": "module",
+  "description": "Browser-native Chatcap engine (no Python required)",
+  "scripts": {
+    "test": "node --test tests"
+  }
+}
